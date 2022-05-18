@@ -36,7 +36,7 @@
                         <td>
                             <a href="{{ route('users.edit', $item->id) }}" class="btn btn-warning">Edit</a>
 
-                            <form action="{{ route('users.destroy', $item->id) }}" id="form-delete{{ $item->id }} "
+                            <form action="{{ route('users.destroy', $item->id) }}" id="form-delete{{ $item->id }}"
                                 method="post">
                                 @csrf
                                 @method('delete')
@@ -57,19 +57,4 @@
 @endsection
 
 @section('script')
-    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-        crossorigin="anonymous"></script>
-    {{-- <script>
-        $(() => {
-            $(document).on('click', '.btn-delete', function(e) {
-                e.preventDefault();
-
-                let id = $(this).data('id');
-                if (confirm('delete it')) {
-                    $(`#form-delete${id}`).submit();
-                }
-            })
-
-        })
-    </script> --}}
 @endsection
