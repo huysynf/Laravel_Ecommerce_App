@@ -66,16 +66,7 @@ Route::resource('products', ProductController::class);
 
 
 
-Route::post('/create ', function(Request $request){
+Route::get('/test ', function(Request $request){
 
-    $dataCreate = $request->except('sizes');
-    $sizes = $request->sizes ? json_decode($request->sizes) : [];
-
-    $product = Product::create($dataCreate);
-    $sizeArray = [];
-    foreach($sizes as $size)
-    {
-        $sizeArray[] = ['size' => $size->size, 'quantity' => $size->quantity, 'product_id' => $product->id];
-    }
-    ProductDetail::insert($sizeArray);
-})->name('test');
+ return view('client.products.detail');
+});
