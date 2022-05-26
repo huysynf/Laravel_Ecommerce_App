@@ -68,8 +68,8 @@ class ProductController extends Controller
         {
             $sizeArray[] = ['size' => $size->size, 'quantity' => $size->quantity, 'product_id' => $product->id];
         }
-        $this->productDetail->insert($sizeArray);
 
+        $product->details()->insert($sizeArray);
         return redirect()->route('products.index')->with(['message' => 'create product success']);
     }
 
@@ -126,9 +126,7 @@ class ProductController extends Controller
         {
             $sizeArray[] = ['size' => $size->size, 'quantity' => $size->quantity, 'product_id' => $product->id];
         }
-        $product->details()->delete();
-        $this->productDetail->insert($sizeArray);
-
+        $product->details()->insert($sizeArray);
         return redirect()->route('products.index')->with(['message' => 'Update product success']);
     }
 
