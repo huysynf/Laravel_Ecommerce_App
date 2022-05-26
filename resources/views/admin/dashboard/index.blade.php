@@ -26,8 +26,6 @@
         <div class="card">
             <div class="card-header p-3 pt-2">
                 <div
-
-
                     class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
                     <i class="material-icons opacity-10">person</i>
                 </div>
