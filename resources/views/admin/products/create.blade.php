@@ -52,9 +52,8 @@
                 <div class="form-group">
                     <label>Description</label>
                     <div class="row w-100 h-100">
-                        <textarea name="description" id="description" class="form-control"
+                        <textarea name="description" id="description" class="form-control" cols="4" rows="5"
                             style="width: 100%">{{ old('description') }} </textarea>
-
                     </div>
                     @error('description')
                         <span class="text-danger"> {{ $message }}</span>
@@ -118,6 +117,11 @@
         .row {
             justify-content: center;
             align-items: center
+        }
+
+        .ck.ck-editor {
+            width: 100%;
+            height: 100%;
         }
 
     </style>
