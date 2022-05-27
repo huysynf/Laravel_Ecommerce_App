@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\ComposerServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
 return [
@@ -195,7 +196,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class
+        Intervention\Image\ImageServiceProvider::class,
+        ComposerServiceProvider::class
 
     ],
 
