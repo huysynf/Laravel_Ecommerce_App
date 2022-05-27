@@ -207,7 +207,7 @@
     <!-- Categories End -->
 
     @yield('content')
-
+    @include('client.home.product')
     <!-- Subscribe Start -->
 
 
