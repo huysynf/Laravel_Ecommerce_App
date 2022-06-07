@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Composers\CartComposer;
 use App\Composers\CategoryComposer;
+use App\Models\Cart;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 
@@ -27,6 +29,7 @@ class ComposerServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('client.layouts.app', CategoryComposer::class);
+        View::composer('client.layouts.app', CartComposer::class);
 
     }
 }
