@@ -1,5 +1,5 @@
 @extends('client.layouts.app')
-@section('title', 'product detial')
+@section('title', 'product detail')
 @section('content')
     <!-- Page Header Start -->
     <div class="row" style="margin-left: 50px">
@@ -10,11 +10,15 @@
         </div>
     </div>
     <!-- Page Header End -->
-
+    @if (session('message'))
+        <h2 class="" style="text-align: center; width:100%; color:red"> {{ session('message') }}</h2>
+    @endif
 
     <!-- Shop Detail Start -->
     <div class="container-fluid py-5">
-        <div class="row px-xl-5">
+        <form action="{{ route('client.carts.add') }}" method="POST" class="row px-xl-5">
+            @csrf
+            <input type="hidden" name="product_id" value="{{ $product->id }}">
             <div class="col-lg-5 pb-5">
                 <div id="product-carousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner border">
@@ -44,15 +48,25 @@
 
                 <div class="d-flex mb-4">
                     <p class="text-dark font-weight-medium mb-0 mr-3">Size:</p>
-                    <form>
-                        @foreach ($product->details as $size)
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="color-1" name="color">
-                                <label class="custom-control-label" for="color-1">{{ $size->size }}</label>
-                            </div>
-                        @endforeach
-                    </form>
+                    @if ($product->details->count() > 0)
+                        <form>
+                            @foreach ($product->details as $size)
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" name="product_size"
+                                        value="{{ $size->size }}" id="size{{ $size->size }}">
+                                    <label for="size{{ $size->size }}"
+                                        class="
+                                        custom-control-label">{{ $size->size }}</label>
+                                </div>
+                            @endforeach
+                        </form>
+                    @else
+                        <p>Hết hàng</p>
+                    @endif
+
                 </div>
+
+
                 <div class="d-flex align-items-center mb-4 pt-2">
                     <div class="input-group quantity mr-3" style="width: 130px;">
                         <div class="input-group-btn">
@@ -87,7 +101,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
         <div class="row px-xl-5">
             <div class="col">
                 <div class="nav nav-tabs justify-content-center border-secondary mb-4">
