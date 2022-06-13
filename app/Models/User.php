@@ -52,4 +52,14 @@ class User extends Authenticatable
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
+    public function createImage($imageNane)
+    {
+        return $this->images()->create(['url' => $imageNane]);
+    }
+
+    public function assignRoles(...$roles)
+    {
+        return $this->roles()->sync($roles);
+    }
 }

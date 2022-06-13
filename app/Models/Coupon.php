@@ -33,5 +33,4 @@ class Coupon extends Model
         return $this->whereName($name)->whereDoesntHave('users', fn($q) => $q->where('users.id', $userId))
         ->whereDate('expery_date', '>=', Carbon::now())->first();
     }
-
 }

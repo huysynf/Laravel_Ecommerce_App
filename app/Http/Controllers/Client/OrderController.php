@@ -29,6 +29,4 @@ class OrderController extends Controller
         $order->update(['status' => 'cancel']);
         return redirect()->route('client.orders.index')->with(['message' => 'cancel success']);
     }
-
-
 }

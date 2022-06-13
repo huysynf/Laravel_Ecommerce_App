@@ -34,6 +34,4 @@ class Category extends Model
     {
         return Category::whereNull('parent_id')->with('childrens')->get(['id', 'name']);
     }
-
-
 }

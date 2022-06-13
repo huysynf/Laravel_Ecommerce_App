@@ -61,6 +61,7 @@ class CartController extends Controller
     {
          $cartProduct =  $this->cartProduct->find($id);
          $dataUpdate = $request->all();
+         
          if($dataUpdate['product_quantity'] < 1 ) {
             $cartProduct->delete();
         } else {

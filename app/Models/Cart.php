@@ -26,12 +26,7 @@ class Cart extends Model
     public function firtOrCreateBy($userId)
     {
         $cart = $this->getBy($userId);
-
-        if(!$cart)
-        {
-            $cart = $this->cart->create(['user_id' => $userId]);
-        }
-        return $cart;
+        return $cart ?? $this->cart->create(['user_id' => $userId]);
     }
 
 
@@ -48,5 +43,4 @@ class Cart extends Model
             return $carry + $price;
         }, 0) : 0;
     }
-
 }

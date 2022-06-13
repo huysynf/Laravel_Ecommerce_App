@@ -59,8 +59,8 @@ class UserController extends Controller
         $dataCreate['image'] = $this->user->saveImage($request);
 
         $user =  $this->user->create($dataCreate);
-        $user->images()->create(['url' => $dataCreate['image']]);
-        $user->roles()->attach($dataCreate['role_ids']);
+        $user->createImage($dataCreate['image']]);
+        $user->assignRoles($dataCreate['role_ids']);
         return to_route('users.index')->with(['message' => 'create success']);
     }
 
@@ -111,7 +111,7 @@ class UserController extends Controller
         $user->update($dataUpdate);
         $user->images()->delete();
         $user->images()->create(['url' => $dataUpdate['image']]);
-        $user->roles()->sync($dataUpdate['role_ids'] ?? []);
+        $user->assignRoles($dataUpdate['role_ids'] ?? []);
         return to_route('users.index')->with(['message' => 'Update success']);
     }
 
