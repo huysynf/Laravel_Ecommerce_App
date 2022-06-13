@@ -9,10 +9,12 @@
         @if (session('message'))
             <h1 class="text-primary">{{ session('message') }}</h1>
         @endif
-        <div>
-            <a href="{{ route('users.create') }}" class="btn btn-primary">Create</a>
+        @can('create-user')
+            <div>
+                <a href="{{ route('users.create') }}" class="btn btn-primary">Create</a>
 
-        </div>
+            </div>
+        @endcan
         <div>
             <table class="table table-hover">
                 <tr>
@@ -34,17 +36,19 @@
 
                         <td>{{ $item->phone }}</td>
                         <td>
-                            <a href="{{ route('users.edit', $item->id) }}" class="btn btn-warning">Edit</a>
+                            @can('update-user')
+                                <a href="{{ route('users.edit', $item->id) }}" class="btn btn-warning">Edit</a>
+                            @endcan
+                            @can('delete-user')
+                                <form action="{{ route('users.destroy', $item->id) }}" id="form-delete{{ $item->id }}"
+                                    method="post">
+                                    @csrf
+                                    @method('delete')
+                                    <button class="btn btn-delete btn-danger" type="submit"
+                                        data-id={{ $item->id }}>Delete</button>
 
-                            <form action="{{ route('users.destroy', $item->id) }}" id="form-delete{{ $item->id }}"
-                                method="post">
-                                @csrf
-                                @method('delete')
-                                <button class="btn btn-delete btn-danger" type="submit"
-                                    data-id={{ $item->id }}>Delete</button>
-
-                            </form>
-
+                                </form>
+                            @endcan
                         </td>
                     </tr>
                 @endforeach

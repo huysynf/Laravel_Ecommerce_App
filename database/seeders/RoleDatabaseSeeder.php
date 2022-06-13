@@ -20,6 +20,7 @@ class RoleDatabaseSeeder extends Seeder
 
         $roles = [
                 ['name' => 'super-admin', 'display_name' => 'Super Admin', 'group' => 'system'],
+
                 ['name' => 'admin', 'display_name' => 'Admin', 'group' => 'system'],
 
                 ['name' => 'employee', 'display_name' => 'employee', 'group' => 'system'],
@@ -60,6 +61,11 @@ class RoleDatabaseSeeder extends Seeder
             ['name' => 'update-coupon', 'display_name' => 'Update coupon', 'group' => 'coupon'],
             ['name' => 'show-coupon', 'display_name' => 'Show coupon', 'group' => 'coupon'],
             ['name' => 'delete-coupon', 'display_name' => 'Delete coupon', 'group' => 'coupon'],
+
+
+            ['name' => 'list-order', 'display_name' => 'list order', 'group' => 'orders'],
+            ['name' => 'update-order-status', 'display_name' => 'Update order status', 'group' => 'orders'],
+
     ];
 
     foreach($permissions as $item){

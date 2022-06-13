@@ -11,10 +11,12 @@
         <h1>
             Role list
         </h1>
-        <div>
-            <a href="{{ route('roles.create') }}" class="btn btn-primary">Create</a>
+        @can('create-role')
+            <div>
+                <a href="{{ route('roles.create') }}" class="btn btn-primary">Create</a>
 
-        </div>
+            </div>
+        @endcan
         <div>
             <table class="table table-hover">
                 <tr>
@@ -31,17 +33,19 @@
 
                         <td>{{ $role->display_name }}</td>
                         <td>
-                            <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-warning">Edit</a>
+                            @can('update-role')
+                                <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-warning">Edit</a>
+                            @endcan
+                            @can('delete-role')
+                                <form action="{{ route('roles.destroy', $role->id) }}" id="form-delete{{ $role->id }}"
+                                    method="post">
+                                    @csrf
+                                    @method('delete')
 
-                            <form action="{{ route('roles.destroy', $role->id) }}" id="form-delete{{ $role->id }}"
-                                method="post">
-                                @csrf
-                                @method('delete')
+                                </form>
 
-                            </form>
-
-                            <button class="btn btn-delete btn-danger" data-id={{ $role->id }}>Delete</button>
-
+                                <button class="btn btn-delete btn-danger" data-id={{ $role->id }}>Delete</button>
+                            @endcan
                         </td>
                     </tr>
                 @endforeach

@@ -61,13 +61,63 @@ Route::middleware('auth')->group(function(){
         return view('admin.dashboard.index');
     })->name('dashboard');
 
-    Route::resource('roles', RoleController::class);
-    Route::resource('users', UserController::class);
-    Route::resource('categories', CategoryController::class);
-    Route::resource('products', ProductController::class);
-    Route::resource('coupons', CounponController::class);
-    Route::get('orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
-    Route::post('update-status/{id}', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.update_status');
+    // Route::resource('roles', RoleController::class);
+    Route::prefix('roles')->controller(RoleController::Class)->name('roles.')->group(function(){
+        Route::get('/', 'index')->name('index')->middleware('show-role');
+        Route::post('/', 'store')->name('store')->middleware('create-role');
+        Route::get('/create', 'create')->name('create')->middleware('create-role');
+        Route::get('/{coupon}', 'show')->name('show')->middleware('show-role');
+        Route::put('/{coupon}', 'update')->name('update')->middleware('update-role');
+        Route::delete('/{coupon}', 'destroy')->name('destroy')->middleware('delete-role');
+        Route::get('/{coupon}/edit', 'edit')->name('edit')->middleware('update-role');
+    });
+    // Route::resource('users', UserController::class);
+    Route::prefix('users')->controller(UserController::Class)->name('users.')->group(function(){
+        Route::get('/', 'index')->name('index')->middleware('show-user');
+        Route::post('/', 'store')->name('store')->middleware('create-user');
+        Route::get('/create', 'create')->name('create')->middleware('create-user');
+        Route::get('/{coupon}', 'show')->name('show')->middleware('show-user');
+        Route::put('/{coupon}', 'update')->name('update')->middleware('update-user');
+        Route::delete('/{coupon}', 'destroy')->name('destroy')->middleware('delete-user');
+        Route::get('/{coupon}/edit', 'edit')->name('edit')->middleware('update-user');
+    });
+    // Route::resource('categories', CategoryController::class);
+    Route::prefix('categories')->controller(CategoryController::Class)->name('categories.')->group(function(){
+        Route::get('/', 'index')->name('index')->middleware('show-category');
+        Route::post('/', 'store')->name('store')->middleware('create-category');
+        Route::get('/create', 'create')->name('create')->middleware('create-category');
+        Route::get('/{coupon}', 'show')->name('show')->middleware('show-category');
+        Route::put('/{coupon}', 'update')->name('update')->middleware('update-category');
+        Route::delete('/{coupon}', 'destroy')->name('destroy')->middleware('delete-category');
+        Route::get('/{coupon}/edit', 'edit')->name('edit')->middleware('update-category');
+    });
+
+    // Route::resource('products', ProductController::class);
+
+    Route::prefix('products')->controller(ProductController::Class)->name('products.')->group(function(){
+        Route::get('/', 'index')->name('index')->middleware('show-product');
+        Route::post('/', 'store')->name('store')->middleware('create-product');
+        Route::get('/create', 'create')->name('create')->middleware('create-product');
+        Route::get('/{coupon}', 'show')->name('show')->middleware('show-product');
+        Route::put('/{coupon}', 'update')->name('update')->middleware('update-product');
+        Route::delete('/{coupon}', 'destroy')->name('destroy')->middleware('delete-product');
+        Route::get('/{coupon}/edit', 'edit')->name('edit')->middleware('update-product');
+    });
+
+    // Route::resource('coupons', CounponController::class);
+
+    Route::prefix('coupons')->controller(CounponController::Class)->name('coupons.')->group(function(){
+        Route::get('/', 'index')->name('index')->middleware('show-coupon');
+        Route::post('/', 'store')->name('store')->middleware('create-coupon');
+        Route::get('/create', 'create')->name('create')->middleware('create-coupon');
+        Route::get('/{coupon}', 'show')->name('show')->middleware('show-coupon');
+        Route::put('/{coupon}', 'update')->name('update')->middleware('update-coupon');
+        Route::delete('/{coupon}', 'destroy')->name('destroy')->middleware('delete-coupon');
+        Route::get('/{coupon}/edit', 'edit')->name('edit')->middleware('update-coupon');
+    });
+
+    Route::get('orders', [AdminOrderController::class, 'index'])->name('admin.orders.index')->middleware('list-order');
+    Route::post('update-status/{id}', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.update_status')->middleware('update-order-status');
 });
 
 

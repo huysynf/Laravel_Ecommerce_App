@@ -11,10 +11,12 @@
         <h1>
             Products list
         </h1>
-        <div>
-            <a href="{{ route('products.create') }}" class="btn btn-primary">Create</a>
+        @can('create-product')
+            <div>
+                <a href="{{ route('products.create') }}" class="btn btn-primary">Create</a>
 
-        </div>
+            </div>
+        @endcan
         <div>
             <table class="table table-hover">
                 <tr>
@@ -37,18 +39,22 @@
 
                         <td>{{ $item->sale }}</td>
                         <td>
-                            <a href="{{ route('products.edit', $item->id) }}" class="btn btn-warning">Edit</a>
-                            <a href="{{ route('products.show', $item->id) }}" class="btn btn-warning">Show</a>
+                            @can('update-product')
+                                <a href="{{ route('products.edit', $item->id) }}" class="btn btn-warning">Edit</a>
+                            @endcan
+                            @can('show-product')
+                                <a href="{{ route('products.show', $item->id) }}" class="btn btn-warning">Show</a>
+                            @endcan
+                            @can('delete-product')
+                                <form action="{{ route('products.destroy', $item->id) }}" id="form-delete{{ $item->id }}"
+                                    method="post">
+                                    @csrf
+                                    @method('delete')
 
-                            <form action="{{ route('products.destroy', $item->id) }}" id="form-delete{{ $item->id }}"
-                                method="post">
-                                @csrf
-                                @method('delete')
+                                </form>
 
-                            </form>
-
-                            <button class="btn btn-delete btn-danger" data-id={{ $item->id }}>Delete</button>
-
+                                <button class="btn btn-delete btn-danger" data-id={{ $item->id }}>Delete</button>
+                            @endcan
                         </td>
                     </tr>
                 @endforeach

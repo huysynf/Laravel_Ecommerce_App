@@ -42,17 +42,19 @@
                                   <td>{{ $item->id }}</td>
 
                                   <td>
-
-                                      <div class="input-group input-group-static mb-4">
-                                          <select name="status" class="form-control select-status"
-                                              data-action="{{ route('admin.orders.update_status', $item->id) }}">
-                                              @foreach (config('order.status') as $status)
-                                                  <option value="{{ $status }}"
-                                                      {{ $status == $item->status ? 'selected' : '' }}>{{ $status }}
-                                                  </option>
-                                              @endforeach
-                                          </select>
-
+                                      @can('update-order-status')
+                                          <div class="input-group input-group-static mb-4">
+                                              <select name="status" class="form-control select-status"
+                                                  data-action="{{ route('admin.orders.update_status', $item->id) }}">
+                                                  @foreach (config('order.status') as $status)
+                                                      <option value="{{ $status }}"
+                                                          {{ $status == $item->status ? 'selected' : '' }}>{{ $status }}
+                                                      </option>
+                                                  @endforeach
+                                              </select>
+                                          @else
+                                              <p>{{ $item->status }}</p>
+                                          @endcan
                                   </td>
                                   <td>${{ $item->total }}</td>
 
