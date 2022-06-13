@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CounponController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
@@ -10,8 +11,6 @@ use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\OrderController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
@@ -57,9 +56,7 @@ Auth::routes();
 // route admin
 Route::middleware('auth')->group(function(){
 
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard.index');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Route::resource('roles', RoleController::class);
     Route::prefix('roles')->controller(RoleController::Class)->name('roles.')->group(function(){
