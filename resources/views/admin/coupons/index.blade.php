@@ -37,17 +37,19 @@
                         <td>{{ $item->expery_date }}</td>
 
                         <td>
-                            <a href="{{ route('coupons.edit', $item->id) }}" class="btn btn-warning">Edit</a>
+                            @can('update-coupon')
+                                <a href="{{ route('coupons.edit', $item->id) }}" class="btn btn-warning">Edit</a>
+                            @endcan
+                            @can('delete-coupon')
+                                <form action="{{ route('coupons.destroy', $item->id) }}" id="form-delete{{ $item->id }}"
+                                    method="post">
+                                    @csrf
+                                    @method('delete')
 
-                            <form action="{{ route('coupons.destroy', $item->id) }}" id="form-delete{{ $item->id }}"
-                                method="post">
-                                @csrf
-                                @method('delete')
+                                </form>
 
-                            </form>
-
-                            <button class="btn btn-delete btn-danger" data-id={{ $item->id }}>Delete</button>
-
+                                <button class="btn btn-delete btn-danger" data-id={{ $item->id }}>Delete</button>
+                            @endcan
                         </td>
                     </tr>
                 @endforeach
