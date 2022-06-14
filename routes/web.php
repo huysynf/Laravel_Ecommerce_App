@@ -10,6 +10,7 @@ use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\OrderController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -64,6 +65,9 @@ Route::middleware('auth')->group(function(){
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
     Route::resource('coupons', CounponController::class);
+
+    Route::get('orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+    Route::post('update-status/{id}', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.update_status');
 
 });
 
