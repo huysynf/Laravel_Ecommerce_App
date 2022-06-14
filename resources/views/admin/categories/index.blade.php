@@ -31,16 +31,18 @@
 
                         <td>{{ $item->parent_name }}</td>
                         <td>
-                            <a href="{{ route('categories.edit', $item->id) }}" class="btn btn-warning">Edit</a>
+                            @can('update-category')
+                                <a href="{{ route('categories.edit', $item->id) }}" class="btn btn-warning">Edit</a>
+                            @endcan
+                            @can('delete-category')
+                                <form action="{{ route('categories.destroy', $item->id) }}"
+                                    id="form-delete{{ $item->id }}" method="post">
+                                    @csrf
+                                    @method('delete')
 
-                            <form action="{{ route('categories.destroy', $item->id) }}"
-                                id="form-delete{{ $item->id }}" method="post">
-                                @csrf
-                                @method('delete')
-
-                            </form>
-
-                            <button class="btn btn-delete btn-danger" data-id={{ $item->id }}>Delete</button>
+                                </form>
+                                <button class="btn btn-delete btn-danger" data-id={{ $item->id }}>Delete</button>
+                            @endcan
 
                         </td>
                     </tr>
@@ -55,7 +57,5 @@
 
 @section('script')
 
-    <script>
-
-    </script>
+    <script></script>
 @endsection
