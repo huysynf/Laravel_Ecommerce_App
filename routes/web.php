@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use Illuminate\Support\Facades\Route;
 
+if (App::environment('production')) {
+    URL::forceScheme('https');
+}
 
 /*
 |--------------------------------------------------------------------------
