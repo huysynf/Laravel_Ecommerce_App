@@ -27,8 +27,7 @@ class Cart extends Model
     {
         $cart = $this->getBy($userId);
 
-        if(!$cart)
-        {
+        if (!$cart) {
             $cart = $this->cart->create(['user_id' => $userId]);
         }
         return $cart;
@@ -48,5 +47,4 @@ class Cart extends Model
             return $carry + $price;
         }, 0) : 0;
     }
-
 }
