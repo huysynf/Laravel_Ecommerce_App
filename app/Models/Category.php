@@ -21,7 +21,7 @@ class Category extends Model
 
     public function childrens()
     {
-       return $this->hasMany(Category::class, 'parent_id');
+        return $this->hasMany(Category::class, 'parent_id');
     }
 
     public function getParentNameAttribute()
@@ -34,6 +34,4 @@ class Category extends Model
     {
         return Category::whereNull('parent_id')->with('childrens')->get(['id', 'name']);
     }
-
-
 }
