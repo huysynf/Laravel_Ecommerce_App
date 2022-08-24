@@ -16,6 +16,7 @@ return new class extends Migration
     {
         if(Schema::hasColumn('coupon_user', 'order_id'))
         Schema::table('coupon_user', function (Blueprint $table) {
+            $table->dropForeignIdFor(Order::class);
             $table->dropColumn('order_id');
         });
     }

@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Cart;
+use App\Models\User;
 
 return new class extends Migration
 {
@@ -20,6 +22,7 @@ return new class extends Migration
 
         if(Schema::hasColumn('cart_products', 'user_id'))
         Schema::table('cart_products', function (Blueprint $table) {
+            $table->dropForeignIdFor(User::class);
             $table->dropColumn('user_id');
         });
 
