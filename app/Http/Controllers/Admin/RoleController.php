@@ -7,27 +7,42 @@ use App\Http\Requests\Roles\CreateRoleRequest;
 use App\Http\Requests\Roles\UpdateRoleRequest;
 use App\Models\Permisson;
 use App\Models\Role;
+use App\Services\RoleService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
+    protected RoleService $roleService;
+
+    /**
+     * @param RoleService $roleService
+     */
+    public function __construct(RoleService $roleService)
+    {
+        $this->roleService = $roleService;
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
-    public function index()
+    public function index(): Application|Factory|View
     {
-        $roles = Role::latest('id')->paginate(3);
+        $roles = $this->roleService->getWithPaginate();
         return view('admin.roles.index', compact('roles'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
-    public function create()
+    public function create(): View|Factory|Application
     {
         $permissions = Permisson::all()->groupBy('group');
         return view('admin.roles.create', compact('permissions'));
@@ -37,16 +52,12 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param CreateRoleRequest $request
+     * @return RedirectResponse
      */
-    public function store(CreateRoleRequest $request)
+    public function store(CreateRoleRequest $request): \Illuminate\Http\RedirectResponse
     {
-        $dataCreate = $request->all();
-        $dataCreate['guard_name'] = 'web';
-        $role = Role::create($dataCreate);
-
-        $role->permissions()->attach($dataCreate['permission_ids']);
+        $this->roleService->create($request);
         return to_route('roles.index')->with(['message' => 'create suceess']);
     }
 
@@ -65,11 +76,11 @@ class RoleController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
-    public function edit($id)
+    public function edit($id): View|Factory|Application
     {
-        $role = Role::with('permissions')->findOrFail($id);
+        $role = $this->roleService->findOrFail($id);
         $permissions = Permisson::all()->groupBy('group');
         return view('admin.roles.edit', compact('role', 'permissions'));
 
@@ -78,17 +89,13 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateRoleRequest $request
+     * @param int $id
+     * @return RedirectResponse
      */
-    public function update(UpdateRoleRequest $request, $id)
+    public function update(UpdateRoleRequest $request, $id): RedirectResponse
     {
-        $role = Role::findOrFail($id);
-        $dataUpdate = $request->all();
-        $role->update($dataUpdate);
-        $role->permissions()->sync($dataUpdate['permission_ids']);
-
+        $this->roleService->update($request, $id);
         return to_route('roles.index')->with(['message' => 'update suceess']);
 
     }
@@ -97,12 +104,11 @@ class RoleController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
     public function destroy($id)
     {
-        Role::destroy($id);
+        $this->roleService->delete($id);
         return to_route('roles.index')->with(['message' => 'delete suceess']);
-
     }
 }
