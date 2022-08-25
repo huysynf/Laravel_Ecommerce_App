@@ -69,4 +69,12 @@ class RoleService
     {
         return $this->roleRepository->getWithPaginate();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getWithGroup(): mixed
+    {
+        return $this->roleRepository->all()->groupBy('group');
+    }
 }

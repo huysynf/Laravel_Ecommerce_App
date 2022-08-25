@@ -6,16 +6,24 @@ use Image;
 
 trait HandleImageTrait
 {
-    protected $path = 'upload/';
+    protected string $path = 'upload/';
 
-    public function veryfy($request)
+    /**
+     * @param $request
+     * @return mixed
+     */
+    public function verify($request)
     {
         return $request->has('image');
     }
 
+    /**
+     * @param $request
+     * @return string|void
+     */
     public function saveImage($request)
     {
-        if($this->veryfy($request))
+        if($this->verify($request))
         {
             $image = $request->file('image');
             $name = time() . '.' . $image->getClientOriginalExtension();
@@ -24,9 +32,14 @@ trait HandleImageTrait
         }
     }
 
-    public function updateImage($request, $currentImage)
+    /**
+     * @param $request
+     * @param $currentImage
+     * @return mixed|string|null
+     */
+    public function updateImage($request, $currentImage): mixed
     {
-        if($this->veryfy($request))
+        if($this->verify($request))
         {
             $this->deleteImage($currentImage);
 
@@ -35,13 +48,16 @@ trait HandleImageTrait
 
         return $currentImage;
     }
-    public function deleteImage($imageName)
+
+    /**
+     * @param $imageName
+     * @return void
+     */
+    public function deleteImage($imageName): void
     {
         if($imageName && file_exists($this->path .$imageName))
         {
             unlink($this->path .$imageName);
         }
     }
-
-
 }

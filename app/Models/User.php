@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HandleImageTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,6 +16,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
     use HandleImageTrait, HasRoles;
 
+    const IMAGE_PATH = 'upload/';
     /**
      * The attributes that are mass assignable.
      *
@@ -53,8 +55,40 @@ class User extends Authenticatable
         return $this->morphMany(Image::class, 'imageable');
     }
 
-    public function getImagePathAttribute()
+    /**
+     * @return Attribute
+     */
+    public function imagePath(): Attribute
     {
-        return asset($this->images->count() > 0 ? 'upload/' . $this->images->first()->url : 'upload/default.png');
+        return Attribute::make(
+            get: fn() => self::IMAGE_PATH . ($this?->images?->first()?->url ?? 'default.png')
+        );
+    }
+
+    /**
+     * @param $imageUrl
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function syncImage($imageUrl): \Illuminate\Database\Eloquent\Model
+    {
+        $this->deleteImage();
+        return $this->images()->create(['url' => $imageUrl]);
+    }
+
+    /**
+     * @return int
+     */
+    public function deleteImage(): int
+    {
+        return $this->images()->delete();
+    }
+
+    /**
+     * @param array|int $roles
+     * @return array
+     */
+    public function assignRoles(array | int $roles): array
+    {
+        return $this->roles()->sync($roles);
     }
 }

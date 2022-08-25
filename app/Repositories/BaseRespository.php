@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -8,6 +9,9 @@ abstract class BaseRepository
 {
     public $model;
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function __construct()
     {
         $this->makeModel();
@@ -26,9 +30,9 @@ abstract class BaseRepository
      * Retrieve all data of repository, paginated
      * @param null $limit
      * @param array $columns
-     * @return
+     * @return mixed
      */
-    public function paginate($limit = null, $columns = ['*'])
+    public function paginate($limit = null, array $columns = ['*'])
     {
         $limit = is_null($limit) ? config('repository.pagination.limit', 10) : $limit;
 
@@ -41,7 +45,7 @@ abstract class BaseRepository
      * @param array $columns
      * @return
      */
-    public function find($id, $columns = ['*'])
+    public function find($id, array $columns = ['*'])
     {
         return $this->model->findOrFail($id, $columns);
     }
@@ -64,7 +68,7 @@ abstract class BaseRepository
     /**
      * Save a new entity in repository
      * @param array $input
-     * @return
+     * @return mixed
      */
     public function create(array $input)
     {
@@ -77,7 +81,7 @@ abstract class BaseRepository
      * @param $id
      * @return BaseRepository
      */
-    public function update(array $input, $id)
+    public function update(array $input, $id): BaseRepository
     {
         $model = $this->model->findOrFail($id);
         $model->fill($input);
@@ -93,7 +97,7 @@ abstract class BaseRepository
      *
      * @return int
      */
-    public function delete($id)
+    public function delete($id): int
     {
         return $this->model->destroy($id);
     }
@@ -110,7 +114,10 @@ abstract class BaseRepository
 
     abstract public function model();
 
-    public function makeModel()
+    /**
+     * @throws BindingResolutionException
+     */
+    public function makeModel(): void
     {
         $this->model = app()->make($this->model());
     }

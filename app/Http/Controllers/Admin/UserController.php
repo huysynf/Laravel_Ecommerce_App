@@ -6,6 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\CreateUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Models\Role;
+use App\Services\RoleService;
+use App\Services\UserService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -13,24 +19,27 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
 
-    protected $user;
-    protected $role;
+    protected UserService $userService;
+    protected RoleService $roleService;
 
-    public function __construct(User $user, Role $role)
+    /**
+     * @param UserService $userService
+     * @param RoleService $roleService
+     */
+    public function __construct(UserService $userService, RoleService $roleService)
     {
-        $this->user = $user;
-
-        $this->role =  $role;
+        $this->userService = $userService;
+        $this->roleService = $roleService;
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
-    public function index()
+    public function index(): Application|Factory|View
     {
-        $users =  $this->user->latest('id')->paginate(5);
+        $users = $this->userService->getWithPaginate();
 
         return view('admin.users.index', compact('users'));
     }
@@ -42,32 +51,26 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = $this->role->all()->groupBy('group');
+        $roles = $this->roleService->getWithGroup();
         return view('admin.users.create', compact('roles'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(CreateUserRequest $request)
     {
-        $dataCreate = $request->all();
-        $dataCreate['password'] = Hash::make($request->password);
-        $dataCreate['image'] = $this->user->saveImage($request);
-
-        $user =  $this->user->create($dataCreate);
-        $user->images()->create(['url' => $dataCreate['image']]);
-        $user->roles()->attach($dataCreate['role_ids']);
+        $this->userService->create($request);
         return to_route('users.index')->with(['message' => 'create success']);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -78,13 +81,13 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        $user =  $this->user->findOrFail($id)->load('roles');
-        $roles = $this->role->all()->groupBy('group');
+        $user = $this->userService->findOrFail($id)->load('roles');
+        $roles = $this->roleService->getWithGroup();
 
         return view('admin.users.edit', compact('user', 'roles'));
     }
@@ -92,42 +95,25 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateUserRequest $request
+     * @param int|string $id
+     * @return RedirectResponse
      */
-    public function update(UpdateUserRequest $request, $id)
+    public function update(UpdateUserRequest $request, int|string $id): \Illuminate\Http\RedirectResponse
     {
-        $dataUpdate = $request->except('password');
-        $user =  $this->user->findOrFail($id)->load('roles');
-
-        if($request->password)
-        {
-            $dataCreate['password'] = Hash::make($request->password);
-        }
-        $currentImage =  $user->images ? $user->images->first()->url : '';
-        $dataUpdate['image'] = $this->user->updateImage($request, $currentImage);
-
-        $user->update($dataUpdate);
-        $user->images()->delete();
-        $user->images()->create(['url' => $dataUpdate['image']]);
-        $user->roles()->sync($dataUpdate['role_ids'] ?? []);
+        $this->userService->update($request, $id);
         return to_route('users.index')->with(['message' => 'Update success']);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $user =  $this->user->findOrFail($id)->load('roles');
-        $user->images()->delete();
-        $imageName =  $user->images->count() > 0 ? $user->images->first()->url : '';
-        $this->user->deleteImage($imageName);
-        $user->delete();
+        $this->userService->delete($id);
 
         return redirect()->route('users.index')->with(['message' => 'Delete success']);
     }
