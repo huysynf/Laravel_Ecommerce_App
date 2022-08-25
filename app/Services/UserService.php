@@ -31,8 +31,8 @@ class UserService
         $dataCreate['password'] = Hash::make($request->password);
         $dataCreate['image'] = $this->saveImage($request);
         $user =  $this->userRepository->create($dataCreate);
-        $user->syncImage(['url' => $dataCreate['image']]);
-        $user->assignRoles($dataCreate['role_ids']);
+        $user->syncImage($dataCreate['image']);
+        $user->assignRoles($dataCreate['role_ids'] ?? []);
 
         return $user;
     }

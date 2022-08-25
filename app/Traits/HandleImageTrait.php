@@ -2,11 +2,12 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\Storage;
 use Image;
 
 trait HandleImageTrait
 {
-    protected string $path = 'upload/';
+    protected string $path = 'public/upload/';
 
     /**
      * @param $request
@@ -26,14 +27,15 @@ trait HandleImageTrait
         if($this->verify($request))
         {
             $image = $request->file('image');
-            $name = time() . '.' . $image->getClientOriginalExtension();
-            Image::make($image)->resize(300, 300)->save($this->path . $name);
+            $name = $image->getClientOriginalName(). '.' . $image->getClientOriginalExtension();
+            $file =  Image::make($image)->resize(300, 300);
+            Storage::put($this->path.$name, $file);
             return $name;
         }
     }
 
     /**
-     * @param $request
+     * @paramfilesystems $request
      * @param $currentImage
      * @return mixed|string|null
      */
@@ -57,7 +59,7 @@ trait HandleImageTrait
     {
         if($imageName && file_exists($this->path .$imageName))
         {
-            unlink($this->path .$imageName);
+            Storage::delete($this->path .$imageName);
         }
     }
 }

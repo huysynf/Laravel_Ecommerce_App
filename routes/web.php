@@ -75,7 +75,7 @@ Route::middleware('auth')->group(function(){
     // Route::resource('users', UserController::class);
     Route::prefix('users')->controller(UserController::Class)->name('users.')->group(function(){
         Route::get('/', 'index')->name('index')->middleware('permission:show-user');
-        Route::post('/', 'store')->name('store')->middleware('permission:create-user');
+        Route::post('/', 'store')->name('store');
         Route::get('/create', 'create')->name('create')->middleware('permission:create-user');
         Route::get('/{coupon}', 'show')->name('show')->middleware('permission:show-user');
         Route::put('/{coupon}', 'update')->name('update')->middleware('permission:update-user');

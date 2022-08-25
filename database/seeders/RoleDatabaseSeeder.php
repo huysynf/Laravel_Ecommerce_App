@@ -75,7 +75,7 @@ class RoleDatabaseSeeder extends Seeder
     ];
 
     foreach($permissions as $item){
-        Permisson::updateOrCreate($item);
-    }
+            Permisson::updateOrCreate($item);
+        }
     }
 }
