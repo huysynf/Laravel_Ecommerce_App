@@ -9,9 +9,7 @@ abstract class BaseRepository
 {
     public $model;
 
-    /**
-     * @throws BindingResolutionException
-     */
+
     public function __construct()
     {
         $this->makeModel();
@@ -114,9 +112,7 @@ abstract class BaseRepository
 
     abstract public function model();
 
-    /**
-     * @throws BindingResolutionException
-     */
+
     public function makeModel(): void
     {
         $this->model = app()->make($this->model());

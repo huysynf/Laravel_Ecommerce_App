@@ -7,7 +7,7 @@ use App\Repositories\BaseRepository;
 class UserRepository extends BaseRepository
 {
 
-    public function model(): string
+    public function model()
     {
         return User::class;
     }
