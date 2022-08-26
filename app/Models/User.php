@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -16,7 +17,8 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
     use HandleImageTrait, HasRoles;
 
-    const IMAGE_PATH = 'upload/';
+    const IMAGE_SAVE_PATH = 'public/upload/';
+    const IMAGE_SHOW_PATH = 'storage/upload/';
     /**
      * The attributes that are mass assignable.
      *
@@ -61,7 +63,7 @@ class User extends Authenticatable
     public function imagePath(): Attribute
     {
         return Attribute::make(
-            get: fn() => self::IMAGE_PATH . ($this?->images?->first()?->url ?? 'default.png')
+            get: fn() => asset(self::IMAGE_SHOW_PATH. $this?->images?->first()?->url)
         );
     }
 
@@ -69,7 +71,7 @@ class User extends Authenticatable
      * @param $imageUrl
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function syncImage($imageUrl): \Illuminate\Database\Eloquent\Model
+    public function syncImage($imageUrl)
     {
         $this->deleteImage();
         return $this->images()->create(['url' => $imageUrl]);
