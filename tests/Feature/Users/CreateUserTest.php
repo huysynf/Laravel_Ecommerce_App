@@ -24,19 +24,16 @@ class CreateUserTest extends TestCase
 
     public function user_can_create_user_if_data_create_is_valid()
     {
-        $this->withoutExceptionHandling();
         $this->login();
-
         Storage::fake('local');
         $imageName = 'image.png';
         $dataCreate = User::factory()->make()->toArray();
         $dataCreate['image'] = UploadedFile::fake()->image($imageName);
         $dataCreate['password'] = $this->faker->text();
-
-        $this->json('POST', route('users.store'),$dataCreate)
+        $this->json('POST', route('users.store'), $dataCreate)
             ->assertRedirect(route('users.index'))
             ->assertSessionHas('message');
-
-       dd (Storage::disk('local')->assertExists(User::IMAGE_PATH.$imageName));
+        $imagePath = User::IMAGE_SAVE_PATH . time() . $imageName;
+        Storage::disk('local')->assertExists($imagePath);
     }
 }

@@ -56,7 +56,6 @@ Route::middleware('auth')->group(function(){
 
 Auth::routes();
 
-
 // route admin
 Route::middleware('auth')->group(function(){
 

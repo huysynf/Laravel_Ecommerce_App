@@ -17,7 +17,8 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
     use HandleImageTrait, HasRoles;
 
-    const IMAGE_PATH = 'public/upload/';
+    const IMAGE_SAVE_PATH = 'public/upload/';
+    const IMAGE_SHOW_PATH = 'storage/upload/';
     /**
      * The attributes that are mass assignable.
      *
@@ -62,7 +63,7 @@ class User extends Authenticatable
     public function imagePath(): Attribute
     {
         return Attribute::make(
-            get: fn() => asset(self::IMAGE_PATH. $this?->images?->first()?->url)
+            get: fn() => asset(self::IMAGE_SHOW_PATH. $this?->images?->first()?->url)
         );
     }
 

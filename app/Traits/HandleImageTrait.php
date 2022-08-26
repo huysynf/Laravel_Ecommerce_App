@@ -13,7 +13,7 @@ trait HandleImageTrait
      * @param $request
      * @return mixed
      */
-    public function verify($request)
+    public function verify($request): mixed
     {
         return $request->has('image');
     }
@@ -24,18 +24,19 @@ trait HandleImageTrait
      */
     public function saveImage($request)
     {
-        if($this->verify($request))
-        {
-            $image = $request->file('image');
-            $name = $image->getClientOriginalName(). '.' . $image->getClientOriginalExtension();
-            $file =  Image::make($image)->resize(300, 300);
-            Storage::put($this->path.$name, $file);
+        if ($this->verify($request)) {
+            $file = $request->file('image');
+            $name = time() . $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $image = Image::make($file)->resize(300, 300);
+            Storage::put($this->path . $name, $image);
             return $name;
         }
     }
 
     /**
      * @paramfilesystems $request
+     * @param $request
      * @param $currentImage
      * @return mixed|string|null
      */
@@ -44,10 +45,8 @@ trait HandleImageTrait
         if($this->verify($request))
         {
             $this->deleteImage($currentImage);
-
             return $this->saveImage($request);
         }
-
         return $currentImage;
     }
 
