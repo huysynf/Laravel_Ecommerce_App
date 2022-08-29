@@ -76,7 +76,7 @@ sonarqube-check:
   script:
     - sonar-scanner
   tags:
-    - sonar
+    - docker
   allow_failure: false
   only:
     - merge_requests
