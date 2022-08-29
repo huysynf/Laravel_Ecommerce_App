@@ -73,7 +73,7 @@ class UserService
     public function delete($id): int
     {
         $user = $this->findOrFail($id);
-        $user->deleteImage($user?->images?->first()?->url);
+        $user->destroyImage($user?->images?->first()?->url);
         $this->deleteImage($user?->images?->first()?->url);
         $user->delete();
         return $user;

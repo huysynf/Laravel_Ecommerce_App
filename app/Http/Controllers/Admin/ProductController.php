@@ -6,22 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\CreateProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
 use App\Models\Category;
-use App\Models\Product;
-use App\Models\ProductDetail;
-use Illuminate\Http\Request;
+use App\Services\ProductService;
 
 class ProductController extends Controller
 {
 
-    protected $category;
-    protected $product;
-    protected $productDetail;
+    protected Category $category;
+    protected ProductService $productService;
 
-    public function __construct(Product $product, Category $category, ProductDetail $productDetail)
+    public function __construct(Category $category, ProductService $productService)
     {
-        $this->product = $product;
         $this->category = $category;
-        $this->productDetail =  $productDetail;
+        $this->productService = $productService;
     }
 
     /**
@@ -31,7 +27,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products =  $this->product->latest('id')->paginate(5);
+        $products = $this->productService->getWithPaginate();
 
         return view('admin.products.index', compact('products'));
     }
@@ -43,7 +39,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $categories = $this->category->get(['id','name']);
+        $categories = $this->category->get(['id', 'name']);
 
         return view('admin.products.create', compact('categories'));
     }
@@ -51,53 +47,38 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(CreateProductRequest $request)
     {
-        $dataCreate = $request->except('sizes');
-        $sizes = $request->sizes ? json_decode($request->sizes) : [];
-        $product = Product::create($dataCreate);
-        $dataCreate['image'] = $this->product->saveImage($request);
-
-        $product->images()->create(['url' => $dataCreate['image']]);
-        $product->assignCategory($dataCreate['category_ids']);
-        $sizeArray = [];
-        foreach($sizes as $size)
-        {
-            $sizeArray[] = ['size' => $size->size, 'quantity' => $size->quantity, 'product_id' => $product->id];
-        }
-
-        $product->details()->insert($sizeArray);
+        $this->productService->store($request);
         return redirect()->route('products.index')->with(['message' => 'create product success']);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $product =  $this->product->with(['details', 'categories'])->findOrFail($id);
-
-
+        $product = $this->productService->findOrFail($id)->load(['details', 'categories']);
         return view('admin.products.show', compact('product'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        $product =  $this->product->with(['details', 'categories'])->findOrFail($id);
+        $product = $this->productService->findOrFail($id)->load(['details', 'categories']);
 
-        $categories = $this->category->get(['id','name']);
+        $categories = $this->category->get(['id', 'name']);
 
         return view('admin.products.edit', compact('categories', 'product'));
     }
@@ -105,44 +86,25 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateProductRequest $request, $id)
     {
-        $dataUpdate = $request->except('sizes');
-        $sizes = $request->sizes ? json_decode($request->sizes) : [];
-        $product = $this->product->findOrFail($id);
-        $currentImage =  $product->images ? $product->images->first()->url : '';
-        $dataUpdate['image'] = $this->product->updateImage($request, $currentImage);
-
-        $product->update($dataUpdate);
-
-        $product->images()->create(['url' => $dataUpdate['image']]);
-        $product->assignCategory($dataUpdate['category_ids']);
-        $sizeArray = [];
-        foreach($sizes as $size)
-        {
-            $sizeArray[] = ['size' => $size->size, 'quantity' => $size->quantity, 'product_id' => $product->id];
-        }
-        $product->details()->insert($sizeArray);
+        $this->productService->update($request, $id);
         return redirect()->route('products.index')->with(['message' => 'Update product success']);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $product = $this->product->findOrFail($id);
-        $product->delete();
-        $product->details()->delete();
-        $imageName =  $product->images->count() > 0 ? $product->images->first()->url : '';
-        $this->product->deleteImage($imageName);
+        $this->productService->delete($id);
         return redirect()->route('products.index')->with(['message' => 'Delete product success']);
 
     }

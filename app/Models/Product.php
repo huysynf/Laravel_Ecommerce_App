@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Traits\HandleImageTrait;
+use App\Traits\Imaginable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory, HandleImageTrait;
+    use HasFactory, HandleImageTrait, Imaginable;
 
     protected $fillable = [
         'name',
@@ -20,12 +22,6 @@ class Product extends Model
     public function details()
     {
         return $this->hasMany(ProductDetail::class);
-    }
-
-
-    public function images()
-    {
-        return $this->morphMany(Image::class, 'imageable');
     }
 
     public function categories()
@@ -49,13 +45,13 @@ class Product extends Model
         return $this->whereHas('categories', fn($q) => $q->where('category_id', $categoryId))->paginate(10);
     }
 
-    public function getImagePathAttribute()
-    {
-        return asset($this->images->count() > 0 ? 'upload/' . $this->images->first()->url : 'upload/default.png');
-    }
 
-    public function getSalePriceAttribute()
+    public function salePrice() : Attribute
     {
-        return $this->attributes['sale'] ? $this->attributes['price'] - ($this->attributes['sale'] * 0.01  * $this->attributes['price']) : 0;
+        return Attribute::make(
+            get: fn() => $this->attributes['sale']
+                ? $this->attributes['price'] - ($this->attributes['sale'] * 0.01  * $this->attributes['price'])
+                : 0
+        );
     }
 }
